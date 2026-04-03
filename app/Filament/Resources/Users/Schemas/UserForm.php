@@ -10,7 +10,9 @@ use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Hash;
 
 class UserForm
 {
@@ -43,16 +45,39 @@ class UserForm
     {
         return [
             TextInput::make('name')
-                ->required(),
+                ->required()
+                ->validationMessages([
+                    'required' => 'El campo es requerido.',
+                ]),
             TextInput::make('email')
                 ->label('Email address')
                 ->email()
-                ->required(),
-            DateTimePicker::make('email_verified_at'),
+                ->required()
+                ->validationMessages([
+                    'required' => 'El campo es requerido.',
+                ]),
             TextInput::make('password')
+                ->label('Contraseña')
                 ->password()
-                ->required(),
+                ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
+                ->dehydrated(fn(?string $state): bool => filled($state))
+                ->required(fn(string $operation, Get $get): bool => $operation === 'create' && $get('is_active'))
+                ->visible(fn(Get $get): bool => $get('is_active'))
+                ->confirmed(),
+
+            TextInput::make('password_confirmation')
+                ->password()
+                ->label('Confirmar Contraseña')
+                ->required(
+                    fn(string $context, Get $get): bool =>
+                    $context === 'create' && $get('is_active')
+                )
+                ->visible(
+                    fn(string $context, Get $get): bool =>
+                    $context === 'create' && $get('is_active')
+                ),
             Toggle::make('is_active')
+                ->label('Activo')
                 ->default(true)
                 ->columnSpanFull(),
         ];

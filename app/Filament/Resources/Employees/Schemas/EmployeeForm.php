@@ -29,18 +29,39 @@ class EmployeeForm
                 Select::make('tipo_documento')
                     ->options(DocumentType::class)
                     ->required()
-                    ->native(false),
+                    ->native(false)
+                    ->validationMessages([
+                        'required' => 'El campo es requerido.',
+                    ]),
                 TextInput::make('numero_documento')
-                    ->required(),
+                    ->required()
+                    ->validationMessages([
+                        'required' => 'El campo es requerido.',
+                    ]),
                 TextInput::make('nombres')
-                    ->required(),
+                    ->required()
+                    ->validationMessages([
+                        'required' => 'El campo es requerido.',
+                    ]),
                 TextInput::make('apellidos')
-                    ->required(),
+                    ->required()
+                    ->validationMessages([
+                        'required' => 'El campo es requerido.',
+                    ]),
                 DatePicker::make('fecha_nacimiento')
-                    ->required(),
-                Textarea::make('telefono')
-                    ->required(),
-                Textarea::make('direccion'),
+                    ->required()
+                    ->validationMessages([
+                        'required' => 'El campo es requerido.',
+                    ])
+                    ->prefixIcon('heroicon-m-cake'),
+                TextInput::make('telefono')
+                    ->required()
+                    ->prefixIcon('heroicon-m-phone')
+                    ->validationMessages([
+                        'required' => 'El campo es requerido.',
+                    ]),
+                TextInput::make('direccion')
+                    ->prefixIcon('heroicon-m-map-pin'),
                 FileUpload::make('photo_path')
                     ->label('Foto')
                     ->image()
