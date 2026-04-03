@@ -5,7 +5,6 @@ namespace App\Models;
 use App\Enums\DocumentType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
 
 class Employee extends Model
 {
@@ -40,7 +39,6 @@ class Employee extends Model
             'fecha_nacimiento' => 'date',
             'telefono' => 'array',
             'direccion' => 'array',
-            'es_activo' => 'boolean',
         ];
     }
 
@@ -50,13 +48,5 @@ class Employee extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-    public function getTitleAttribute()
-    {
-        return $this->full_name;
-    }
-    public function getFullNameAttribute()
-    {
-        return $this->first_name . ' ' . $this->last_name . ' - ' . $this->document_number;
     }
 }
