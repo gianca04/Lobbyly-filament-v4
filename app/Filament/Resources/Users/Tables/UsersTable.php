@@ -8,6 +8,9 @@ use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
+use Filament\Tables\Columns\BooleanColumn;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\View\View;
@@ -19,19 +22,28 @@ class UsersTable
     {
         return $table
             ->columns([
+                ImageColumn::make('employee.photo')
+                    ->label('')
+                    ->circular(),
                 TextColumn::make('name')
+                    ->label('Nombre de Usuario')
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label('Correo Electrónico')
                     ->searchable(),
-                TextColumn::make('email_verified_at')
-                    ->dateTime()
-                    ->sortable(),
+                TextColumn::make('employee.full_name')
+                    ->label('Nombre Completo')
+                    ->searchable(),
+                IconColumn::make('is_active')
+                    ->label('Activo')
+                    ->boolean(),
                 TextColumn::make('created_at')
+                    ->label('Fecha de Creación')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('updated_at')
+                    ->label('Fecha de Actualización')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),

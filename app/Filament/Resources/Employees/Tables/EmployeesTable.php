@@ -18,19 +18,25 @@ class EmployeesTable
                 TextColumn::make('user_id')
                     ->numeric()
                     ->sortable(),
-                TextColumn::make('tipo_documento')
+                TextColumn::make('document_type')
+                    ->label('Tipo de Documento')
                     ->badge()
                     ->searchable(),
-                TextColumn::make('numero_documento')
+                TextColumn::make('document_number')
+                    ->label('Número de Documento')
                     ->searchable(),
-                TextColumn::make('nombres')
+                TextColumn::make('first_name')
+                    ->label('Nombres')
                     ->searchable(),
-                TextColumn::make('apellidos')
+                TextColumn::make('last_name')
+                    ->label('Apellidos')
                     ->searchable(),
-                TextColumn::make('fecha_nacimiento')
+                TextColumn::make('birth_date')
+                    ->label('Fecha de Nacimiento')
                     ->date()
                     ->sortable(),
-                IconColumn::make('es_activo')
+                IconColumn::make('is_active')
+                    ->label('Activo')
                     ->boolean(),
                 TextColumn::make('photo_path')
                     ->searchable(),

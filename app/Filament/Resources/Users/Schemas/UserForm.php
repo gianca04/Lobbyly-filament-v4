@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Users\Schemas;
 
 use App\Filament\Resources\Employees\Schemas\EmployeeForm;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
@@ -34,6 +35,7 @@ class UserForm
                             ->icon('heroicon-m-lock-closed')
                             ->columns(2)
                             ->schema(self::userFields()),
+
                     ]),
             ]);
     }
@@ -62,7 +64,10 @@ class UserForm
                 ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
                 ->dehydrated(fn(?string $state): bool => filled($state))
                 ->required(fn(string $operation, Get $get): bool => $operation === 'create' && $get('is_active'))
-                ->visible(fn(Get $get): bool => $get('is_active'))
+                ->visible(
+                    fn(string $context, Get $get): bool =>
+                    $context === 'create' || $context === 'edit' && $get('is_active')
+                )
                 ->confirmed(),
 
             TextInput::make('password_confirmation')
@@ -70,16 +75,20 @@ class UserForm
                 ->label('Confirmar Contraseña')
                 ->required(
                     fn(string $context, Get $get): bool =>
-                    $context === 'create' && $get('is_active')
+                    $context === 'create' || $context === 'edit' && $get('is_active')
                 )
                 ->visible(
                     fn(string $context, Get $get): bool =>
-                    $context === 'create' && $get('is_active')
+                    $context === 'create' || $context === 'edit' && $get('is_active')
                 ),
             Toggle::make('is_active')
                 ->label('Activo')
-                ->default(true)
-                ->columnSpanFull(),
+                ->default(true),
+            Select::make('roles')
+                ->relationship('roles', 'name')
+                ->multiple()
+                ->preload()
+                ->searchable(),
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Http\Middleware\EnsureUserIsActive;
+use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -19,6 +20,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Jeffgreco13\FilamentBreezy\BreezyCore;
 
 class DashboardPanelProvider extends PanelProvider
 {
@@ -52,6 +54,13 @@ class DashboardPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->plugins([
+                FilamentShieldPlugin::make()
+                    ->navigationLabel('Roles y permisos')  // string|Closure|null
+                    ->navigationGroup('Seguridad')                  // string|Closure|null
+                    ->navigationBadgeColor('success'),      // string|Closure|null
+                BreezyCore::make()
             ])
             ->authMiddleware([
                 Authenticate::class,
