@@ -61,6 +61,7 @@ class DashboardPanelProvider extends PanelProvider
                     ->navigationGroup('Seguridad')                  // string|Closure|null
                     ->navigationBadgeColor('success'),      // string|Closure|null
                 BreezyCore::make()
+                    ->myProfile(),
             ])
             ->authMiddleware([
                 Authenticate::class,
