@@ -24,8 +24,8 @@ class UserResource extends Resource
     protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $pluralLabel = 'Colaboradores';
-    protected static ?string $label = 'Colaborador';
 
+    protected static ?string $label = 'Colaborador';
 
     public static function form(Schema $schema): Schema
     {
@@ -48,10 +48,11 @@ class UserResource extends Resource
     {
         return [
             'index' => ListUsers::route('/'),
-            //'create' => CreateUser::route('/create'),
-            //'edit' => EditUser::route('/{record}/edit'),
+            'create' => CreateUser::route('/create'),
+            'edit' => EditUser::route('/{record}/edit'),
         ];
     }
+
     public static function getNavigationItems(): array
     {
         return [
