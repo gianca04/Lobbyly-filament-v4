@@ -13,8 +13,10 @@ class LocationForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('Nombre')
                     ->required(),
                 Toggle::make('is_default')
+                    ->label('¿Es la ubicación por defecto?')
                     ->required(),
             ]);
     }

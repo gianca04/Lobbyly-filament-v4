@@ -9,6 +9,7 @@ use App\Filament\Resources\Locations\Schemas\LocationForm;
 use App\Filament\Resources\Locations\Tables\LocationsTable;
 use App\Models\Location;
 use BackedEnum;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,9 +19,25 @@ class LocationResource extends Resource
 {
     protected static ?string $model = Location::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static ?string $label = 'Ubicación';
+
+    protected static ?string $pluralLabel = 'Ubicaciones';
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedMapPin;
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationItems(): array
+    {
+        return [
+            NavigationItem::make('Administrar ubicaciones')
+                ->icon(Heroicon::OutlinedMapPin)
+                ->label('Ubicaciones')
+                ->group('Inventario')
+                ->url(static::getUrl())
+                ->sort(2),
+        ];
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -43,8 +60,8 @@ class LocationResource extends Resource
     {
         return [
             'index' => ListLocations::route('/'),
-            'create' => CreateLocation::route('/create'),
-            'edit' => EditLocation::route('/{record}/edit'),
+            // 'create' => CreateLocation::route('/create'),
+            // 'edit' => EditLocation::route('/{record}/edit'),
         ];
     }
 }

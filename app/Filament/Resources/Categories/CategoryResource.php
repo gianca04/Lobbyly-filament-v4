@@ -9,6 +9,7 @@ use App\Filament\Resources\Categories\Schemas\CategoryForm;
 use App\Filament\Resources\Categories\Tables\CategoriesTable;
 use App\Models\Category;
 use BackedEnum;
+use Filament\Navigation\NavigationItem;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
@@ -18,9 +19,25 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static ?string $label = 'Categoría';
+
+    protected static ?string $pluralLabel = 'Categorías';
+
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedSquares2x2;
 
     protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getNavigationItems(): array
+    {
+        return [
+            NavigationItem::make('Administrar categorías')
+                ->icon(Heroicon::OutlinedSquares2x2)
+                ->label('Categorías')
+                ->group('Inventario')
+                ->url(static::getUrl())
+                ->sort(1),
+        ];
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -43,8 +60,8 @@ class CategoryResource extends Resource
     {
         return [
             'index' => ListCategories::route('/'),
-            'create' => CreateCategory::route('/create'),
-            'edit' => EditCategory::route('/{record}/edit'),
+            // 'create' => CreateCategory::route('/create'),
+            // 'edit' => EditCategory::route('/{record}/edit'),
         ];
     }
 }

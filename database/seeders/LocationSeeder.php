@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Location;
 use Illuminate\Database\Seeder;
 
 class LocationSeeder extends Seeder
@@ -12,9 +12,9 @@ class LocationSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\Location::create([
-            'name' => 'Almacén Principal',
-            'is_default' => true,
-        ]);
+        Location::firstOrCreate(
+            ['name' => 'Almacén Principal'],
+            ['is_default' => true]
+        );
     }
 }

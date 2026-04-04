@@ -8,6 +8,7 @@ enum MovementType: string
     case OUTPUT = 'output';
     case TRANSFER = 'transfer';
     case ADJUSTMENT = 'adjustment';
+    case CONSUMPTION = 'consumption';
 
     public function label(): string
     {
@@ -16,6 +17,7 @@ enum MovementType: string
             self::OUTPUT => 'Salida',
             self::TRANSFER => 'Intercambio',
             self::ADJUSTMENT => 'Ajuste',
+            self::CONSUMPTION => 'Consumo',
         };
     }
 

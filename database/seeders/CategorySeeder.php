@@ -12,10 +12,18 @@ class CategorySeeder extends Seeder
      */
     public function run(): void
     {
-        $categories = ['Materiales', 'Herramientas', 'EPP', 'Maquinaria', 'Mobiliario'];
+        $categories = [
+            'Insumos de Limpieza',
+            'Ropa de Cama y Toallas',
+            'Amenities y Aseo Personal',
+            'Insumos de Cafetería / Cocina',
+            'Papelería e Insumos de Oficina',
+            'Ferretería y Mantenimiento',
+            'Electrónicos y Baterías',
+        ];
 
         foreach ($categories as $category) {
-            Category::create([
+            Category::firstOrCreate([
                 'name' => $category,
             ]);
         }

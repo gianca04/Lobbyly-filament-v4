@@ -18,8 +18,8 @@ class EmployeeForm
         return array_values(array_filter([
             $includeUserId
                 ? TextInput::make('user_id')
-                ->required()
-                ->numeric()
+                    ->required()
+                    ->numeric()
                 : null,
             Group::make([
                 FileUpload::make('photo_path')
@@ -38,7 +38,7 @@ class EmployeeForm
                         ->label('Número de Documento')
                         ->required(),
 
-                ])->columns(1)
+                ])->columns(1),
             ])
                 ->columns(2),
             Group::make([
@@ -56,29 +56,24 @@ class EmployeeForm
                     ->columnSpanFull(),
                 Repeater::make('phones')
                     ->label('Teléfonos')
-                    ->collapsible()
-                    ->collapsed()
-                    ->defaultItems(0)
-                    ->itemLabel(fn(array $state): ?string => $state['phone'] ?? null)
-                    ->reorderable(false)
-                    ->schema([
+                    ->simple(
                         TextInput::make('phone')
-                            ->label('Número de Teléfono')
-                            ->prefixIcon('heroicon-o-phone'),
-                    ])
+                            ->label('Teléfono')
+                            ->prefixIcon('heroicon-o-phone')
+                            ->tel()
+                            ->required(),
+                    )
+                    ->default([])
                     ->addActionLabel('Agregar Teléfono'),
                 Repeater::make('addresses')
                     ->label('Direcciones')
-                    ->collapsed()
-                    ->collapsible()
-                    ->reorderable(false)
-                    ->itemLabel(fn(array $state): ?string => $state['address'] ?? null)
-                    ->defaultItems(0)
-                    ->schema([
+                    ->simple(
                         TextInput::make('address')
                             ->label('Dirección')
-                            ->prefixIcon('heroicon-o-map-pin'),
-                    ])
+                            ->prefixIcon('heroicon-o-map-pin')
+                            ->required(),
+                    )
+                    ->default([])
                     ->addActionLabel('Agregar Dirección'),
 
             ])

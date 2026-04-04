@@ -8,7 +8,7 @@ return [
 
         'heading' => 'Configurar códigos de verificación por correo electrónico',
 
-        'description' => 'Usted necesitará ingresar el código de 6 dígitos que le enviamos por correo electrónico cada vez que inicie sesión o realice acciones sensibles. Revise su correo electrónico para encontrar el código de 6 dígitos y completar la configuración.',
+        'description' => 'Usted necesitará ingresar el código de 6 dígitos que le enviamos por correo electrónico cada vez que inicie sesión o realice acciones sensibles. Revise su correo electrónico para encontrar el código de 6 dígitos y completar la Inventario.',
 
         'form' => [
 

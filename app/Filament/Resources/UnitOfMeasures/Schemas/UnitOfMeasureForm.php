@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Filament\Resources\Categories\Schemas;
+namespace App\Filament\Resources\UnitOfMeasures\Schemas;
 
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
-class CategoryForm
+class UnitOfMeasureForm
 {
     public static function configure(Schema $schema): Schema
     {
@@ -21,6 +21,9 @@ class CategoryForm
         return [
             TextInput::make('name')
                 ->label('Nombre')
+                ->required(),
+            TextInput::make('symbol')
+                ->label('Símbolo')
                 ->required(),
         ];
     }

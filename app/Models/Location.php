@@ -2,8 +2,11 @@
 
 namespace App\Models;
 
+use Database\Factories\LocationFactory;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Carbon;
 
 /**
@@ -14,10 +17,11 @@ use Illuminate\Support\Carbon;
  * @property bool $is_default Indica si es la ubicación por defecto.
  * @property Carbon|null $created_at Fecha de creación.
  * @property Carbon|null $updated_at Fecha de última actualización.
+ * @property-read Collection<int, Item> $items Artículos en esta ubicación.
  */
 class Location extends Model
 {
-    /** @use HasFactory<\Database\Factories\LocationFactory> */
+    /** @use HasFactory<LocationFactory> */
     use HasFactory;
 
     /**
@@ -40,5 +44,18 @@ class Location extends Model
         return [
             'is_default' => 'boolean',
         ];
+    }
+
+    /**
+     * Obtiene los artículos asociados a la ubicación.
+     *
+     * @return BelongsToMany<Item, Location>
+     */
+    public function items(): BelongsToMany
+    {
+        return $this->belongsToMany(Item::class)
+            ->using(ItemLocation::class)
+            ->withPivot('quantity')
+            ->withTimestamps();
     }
 }
