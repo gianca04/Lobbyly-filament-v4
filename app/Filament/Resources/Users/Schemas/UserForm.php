@@ -3,12 +3,10 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use App\Filament\Resources\Employees\Schemas\EmployeeForm;
-use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Group;
-use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Tabs;
 use Filament\Schemas\Components\Tabs\Tab;
 use Filament\Schemas\Components\Utilities\Get;
@@ -61,12 +59,11 @@ class UserForm
             TextInput::make('password')
                 ->label('Contraseña')
                 ->password()
-                ->dehydrateStateUsing(fn(string $state): string => Hash::make($state))
-                ->dehydrated(fn(?string $state): bool => filled($state))
-                ->required(fn(string $operation, Get $get): bool => $operation === 'create' && $get('is_active'))
+                ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                ->dehydrated(fn (?string $state): bool => filled($state))
+                ->required(fn (string $operation, Get $get): bool => $operation === 'create' && $get('is_active'))
                 ->visible(
-                    fn(string $context, Get $get): bool =>
-                    $context === 'create' || $context === 'edit' && $get('is_active')
+                    fn (string $context, Get $get): bool => $context === 'create' || $context === 'edit' && $get('is_active')
                 )
                 ->confirmed(),
 
@@ -74,12 +71,10 @@ class UserForm
                 ->password()
                 ->label('Confirmar Contraseña')
                 ->required(
-                    fn(string $context, Get $get): bool =>
-                    $context === 'create' || $context === 'edit' && $get('is_active')
+                    fn (string $context, Get $get): bool => $context === 'create' || $context === 'edit' && $get('is_active')
                 )
                 ->visible(
-                    fn(string $context, Get $get): bool =>
-                    $context === 'create' || $context === 'edit' && $get('is_active')
+                    fn (string $context, Get $get): bool => $context === 'create' || $context === 'edit' && $get('is_active')
                 ),
             Toggle::make('is_active')
                 ->label('Activo')

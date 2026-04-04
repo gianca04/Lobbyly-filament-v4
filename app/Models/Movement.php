@@ -86,4 +86,61 @@ class Movement extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Verifica si el movimiento es de tipo ingreso.
+     */
+    public function isInput(): bool
+    {
+        return $this->type === MovementType::INPUT;
+    }
+
+    /**
+     * Verifica si el movimiento es de tipo salida.
+     */
+    public function isOutput(): bool
+    {
+        return $this->type === MovementType::OUTPUT;
+    }
+
+    /**
+     * Verifica si el movimiento es de tipo transferencia.
+     */
+    public function isTransfer(): bool
+    {
+        return $this->type === MovementType::TRANSFER;
+    }
+
+    /**
+     * Verifica si el movimiento es de tipo ajuste.
+     */
+    public function isAdjustment(): bool
+    {
+        return $this->type === MovementType::ADJUSTMENT;
+    }
+
+    /**
+     * Verifica si el movimiento es de tipo consumo.
+     */
+    public function isConsumption(): bool
+    {
+        return $this->type === MovementType::CONSUMPTION;
+    }
+
+    /**
+     * Retorna la cantidad con signo según el tipo de movimiento.
+     *
+     * Los ingresos son positivos, las salidas y consumos son negativos.
+     * Los ajustes mantienen su signo original (puede ser + o -).
+     * Las transferencias se consideran neutras (positivas) ya que
+     * generan dos registros independientes.
+     */
+    public function getSignedQuantity(): float
+    {
+        return match ($this->type) {
+            MovementType::INPUT => abs((float) $this->quantity),
+            MovementType::OUTPUT, MovementType::CONSUMPTION => -abs((float) $this->quantity),
+            MovementType::ADJUSTMENT, MovementType::TRANSFER => (float) $this->quantity,
+        };
+    }
 }

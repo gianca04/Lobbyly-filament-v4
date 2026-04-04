@@ -24,6 +24,7 @@ class EnsureUserIsActive
             return redirect()->route('filament.dashboard.auth.login')
                 ->with('status', 'Tu cuenta ha sido desactivada.');
         }
+
         return $next($request);
     }
 }

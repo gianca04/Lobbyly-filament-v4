@@ -106,4 +106,56 @@ class Item extends Model
             ->using(CategoryItem::class)
             ->withTimestamps();
     }
+
+    /**
+     * Ajusta el stock actual sumando o restando un delta.
+     *
+     * Un delta positivo incrementa el stock, uno negativo lo reduce.
+     * No valida si el resultado es negativo; eso es responsabilidad
+     * del servicio que invoca este método.
+     *
+     * @param  float  $delta  Cantidad a sumar (positiva) o restar (negativa).
+     */
+    public function adjustCurrentStock(float $delta): void
+    {
+        $this->update([
+            'current_stock' => (float) $this->current_stock + $delta,
+        ]);
+    }
+
+    /**
+     * Recalcula el stock total sumando el stock de todas las ubicaciones.
+     *
+     * Garantiza que `current_stock` sea siempre la fuente de verdad
+     * derivada de la tabla pivot `item_location`.
+     */
+    public function recalculateCurrentStock(): void
+    {
+        $totalStock = $this->locations()->sum('item_location.quantity');
+
+        $this->update(['current_stock' => $totalStock]);
+    }
+
+    /**
+     * Verifica si el stock actual está por debajo del mínimo permitido.
+     *
+     * Útil para generar alertas de reabastecimiento.
+     */
+    public function isStockBelowMinimum(): bool
+    {
+        return (float) $this->current_stock < (float) $this->minimum_stock;
+    }
+
+    /**
+     * Obtiene el stock disponible en una ubicación específica.
+     *
+     * @param  Location  $location  Ubicación a consultar.
+     * @return float Cantidad de stock en la ubicación (0 si no existe relación).
+     */
+    public function getStockAtLocation(Location $location): float
+    {
+        $pivot = $this->locations()->where('locations.id', $location->id)->first();
+
+        return $pivot ? (float) $pivot->pivot->quantity : 0.0;
+    }
 }

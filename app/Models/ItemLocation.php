@@ -15,11 +15,29 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
 class ItemLocation extends Pivot
 {
     /**
+     * Nombre de la tabla asociada al modelo pivot.
+     *
+     * @var string
+     */
+    protected $table = 'item_location';
+
+    /**
      * Indica si los IDs de la tabla son incrementales.
      *
      * @var bool
      */
     public $incrementing = true;
+
+    /**
+     * Los atributos que son asignables masivamente.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'item_id',
+        'location_id',
+        'quantity',
+    ];
 
     /**
      * Los atributos que deben ser convertidos a tipos nativos.
