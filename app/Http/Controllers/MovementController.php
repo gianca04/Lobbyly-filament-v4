@@ -14,6 +14,8 @@ use App\DTOs\MovementData;
 use App\DTOs\TransferMovementData;
 use App\Enums\MovementType;
 use App\Http\Requests\StoreAdjustmentMovementRequest;
+use App\Http\Requests\StoreBatchAdjustmentRequest;
+use App\Http\Requests\StoreBatchTransferRequest;
 use App\Http\Requests\StoreInputMovementRequest;
 use App\Http\Requests\StoreOutputMovementRequest;
 use App\Http\Requests\StoreTransferMovementRequest;
@@ -21,6 +23,8 @@ use App\Http\Resources\MovementResource;
 use App\Models\Movement;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Controlador REST para movimientos de inventario.
@@ -80,7 +84,7 @@ class MovementController extends Controller
     ): JsonResponse {
         $data = new InputMovementData(
             itemId: (int) $request->validated('item_id'),
-            userId: (int) auth()->id(),
+            userId: (int) Auth::id(),
             distributions: $request->validated('distributions'),
             notes: $request->validated('notes'),
         );
@@ -108,7 +112,7 @@ class MovementController extends Controller
         $data = new MovementData(
             itemId: (int) $request->validated('item_id'),
             locationId: (int) $request->validated('location_id'),
-            userId: (int) auth()->id(),
+            userId: (int) Auth::id(),
             type: MovementType::OUTPUT,
             quantity: (float) $request->validated('quantity'),
             notes: $request->validated('notes'),
@@ -137,7 +141,7 @@ class MovementController extends Controller
     ): JsonResponse {
         $data = new TransferMovementData(
             itemId: (int) $request->validated('item_id'),
-            userId: (int) auth()->id(),
+            userId: (int) Auth::id(),
             originLocationId: (int) $request->validated('origin_location_id'),
             destinationLocationId: (int) $request->validated('destination_location_id'),
             quantity: (float) $request->validated('quantity'),
@@ -170,7 +174,7 @@ class MovementController extends Controller
     ): JsonResponse {
         $data = new AdjustmentMovementData(
             itemId: (int) $request->validated('item_id'),
-            userId: (int) auth()->id(),
+            userId: (int) Auth::id(),
             locationId: (int) $request->validated('location_id'),
             newQuantity: (float) $request->validated('new_quantity'),
             notes: $request->validated('notes'),
@@ -182,5 +186,91 @@ class MovementController extends Controller
         return (new MovementResource($movement))
             ->response()
             ->setStatusCode(201);
+    }
+
+    /**
+     * Registra transferencias masivas entre ubicaciones.
+     *
+     * Procesa un array de transferencias donde cada fila puede ser
+     * un artículo diferente moviéndose entre ubicaciones distintas.
+     * Toda la operación es atómica: si una falla, se revierten todas.
+     *
+     * @param  StoreBatchTransferRequest  $request  Petición validada con array de transferencias.
+     * @param  ProcessTransferMovementAction  $action  Acción especializada en transferencias.
+     */
+    public function storeBatchTransfer(
+        StoreBatchTransferRequest $request,
+        ProcessTransferMovementAction $action,
+    ): JsonResponse {
+        $transfers = $request->validated('transfers');
+        $notes = $request->validated('notes');
+        $userId = (int) Auth::id();
+
+        $results = DB::transaction(function () use ($transfers, $notes, $userId, $action): array {
+            $allResults = [];
+
+            foreach ($transfers as $transfer) {
+                $data = new TransferMovementData(
+                    itemId: (int) $transfer['item_id'],
+                    userId: $userId,
+                    originLocationId: (int) $transfer['origin_location_id'],
+                    destinationLocationId: (int) $transfer['destination_location_id'],
+                    quantity: (float) $transfer['quantity'],
+                    notes: $notes,
+                );
+
+                $result = $action->execute($data);
+                $allResults[] = $result;
+            }
+
+            return $allResults;
+        });
+
+        return response()->json([
+            'message' => 'Transferencias registradas exitosamente.',
+            'count' => count($results),
+        ], 201);
+    }
+
+    /**
+     * Registra ajustes masivos de inventario.
+     *
+     * Procesa un array de ajustes donde cada fila puede ser
+     * un artículo diferente en una ubicación diferente.
+     * Toda la operación es atómica: si una falla, se revierten todas.
+     *
+     * @param  StoreBatchAdjustmentRequest  $request  Petición validada con array de ajustes.
+     * @param  ProcessAdjustmentMovementAction  $action  Acción especializada en ajustes.
+     */
+    public function storeBatchAdjustment(
+        StoreBatchAdjustmentRequest $request,
+        ProcessAdjustmentMovementAction $action,
+    ): JsonResponse {
+        $adjustments = $request->validated('adjustments');
+        $notes = $request->validated('notes');
+        $userId = (int) Auth::id();
+
+        $movements = DB::transaction(function () use ($adjustments, $notes, $userId, $action): array {
+            $allMovements = [];
+
+            foreach ($adjustments as $adjustment) {
+                $data = new AdjustmentMovementData(
+                    itemId: (int) $adjustment['item_id'],
+                    userId: $userId,
+                    locationId: (int) $adjustment['location_id'],
+                    newQuantity: (float) $adjustment['new_quantity'],
+                    notes: $notes,
+                );
+
+                $allMovements[] = $action->execute($data);
+            }
+
+            return $allMovements;
+        });
+
+        return response()->json([
+            'message' => 'Ajustes registrados exitosamente.',
+            'count' => count($movements),
+        ], 201);
     }
 }

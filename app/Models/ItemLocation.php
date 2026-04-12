@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
@@ -11,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\Pivot;
  * @property int $item_id Identificador del artículo.
  * @property int $location_id Identificador de la ubicación.
  * @property float $quantity Cantidad de stock en esta ubicación.
+ * @property-read Item $item Artículo asociado.
+ * @property-read Location $location Ubicación asociada.
  */
 class ItemLocation extends Pivot
 {
@@ -49,5 +52,25 @@ class ItemLocation extends Pivot
         return [
             'quantity' => 'decimal:2',
         ];
+    }
+
+    /**
+     * Obtiene el artículo asociado.
+     *
+     * @return BelongsTo<Item, ItemLocation>
+     */
+    public function item(): BelongsTo
+    {
+        return $this->belongsTo(Item::class);
+    }
+
+    /**
+     * Obtiene la ubicación asociada.
+     *
+     * @return BelongsTo<Location, ItemLocation>
+     */
+    public function location(): BelongsTo
+    {
+        return $this->belongsTo(Location::class);
     }
 }

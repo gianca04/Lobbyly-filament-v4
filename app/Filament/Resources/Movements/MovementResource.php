@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\Movements;
 
 use App\Filament\Resources\Movements\Pages\CreateMovement;
-use App\Filament\Resources\Movements\Pages\EditMovement;
 use App\Filament\Resources\Movements\Pages\ListMovements;
+use App\Filament\Resources\Movements\Pages\ViewMovement;
 use App\Filament\Resources\Movements\Schemas\MovementForm;
 use App\Filament\Resources\Movements\Tables\MovementsTable;
 use App\Models\Movement;
@@ -61,7 +61,7 @@ class MovementResource extends Resource
         return [
             'index' => ListMovements::route('/'),
             'create' => CreateMovement::route('/create'),
-            'edit' => EditMovement::route('/{record}/edit'),
+            'view' => ViewMovement::route('/{record}'),
         ];
     }
 }

@@ -8,6 +8,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Auth;
 
 class MovementForm
 {
@@ -37,7 +38,7 @@ class MovementForm
                             ->label('Responsable')
                             ->relationship('user', 'name')
                             ->required()
-                            ->default(auth()->id())
+                            ->default(Auth::id())
                             ->native(false)
                             ->searchable()
                             ->preload(),

@@ -72,6 +72,7 @@ class ItemForm
                             ->label('Existencia Actual')
                             ->required()
                             ->numeric()
+                            // ->readOnly()
                             ->default(0.0)
                             ->prefix(fn (Get $get) => UnitOfMeasure::find($get('unit_of_measure_id'))?->symbol ?? ''),
                         TextInput::make('minimum_stock')

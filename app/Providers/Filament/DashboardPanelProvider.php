@@ -29,6 +29,7 @@ class DashboardPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('dashboard')
+            ->sidebarCollapsibleOnDesktop()
             ->path('dashboard')
             ->login()
             ->colors([

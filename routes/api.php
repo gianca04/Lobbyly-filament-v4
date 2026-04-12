@@ -26,4 +26,7 @@ Route::prefix('movements')->name('movements.')->group(function (): void {
     Route::post('/output', [MovementController::class, 'storeOutput'])->name('store.output');
     Route::post('/transfer', [MovementController::class, 'storeTransfer'])->name('store.transfer');
     Route::post('/adjustment', [MovementController::class, 'storeAdjustment'])->name('store.adjustment');
+
+    Route::post('/batch-transfer', [MovementController::class, 'storeBatchTransfer'])->name('store.batch-transfer');
+    Route::post('/batch-adjustment', [MovementController::class, 'storeBatchAdjustment'])->name('store.batch-adjustment');
 });
