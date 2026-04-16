@@ -49,20 +49,20 @@ class ProcessInputMovementAction
         return DB::transaction(function () use ($data): Collection {
             $movements = collect();
 
-            foreach ($data->distributions as $distribution) {
+            foreach ($data->items as $itemData) {
                 $movement = Movement::create([
-                    'item_id' => $data->itemId,
-                    'location_id' => $distribution['location_id'],
+                    'item_id' => $itemData['item_id'],
+                    'location_id' => $itemData['location_id'],
                     'user_id' => $data->userId,
                     'type' => MovementType::INPUT,
-                    'quantity' => $distribution['quantity'],
+                    'quantity' => $itemData['quantity'],
                     'notes' => $data->notes,
                 ]);
 
                 $this->inventoryService->increaseStockAtLocation(
-                    $data->itemId,
-                    $distribution['location_id'],
-                    (float) $distribution['quantity'],
+                    $itemData['item_id'],
+                    $itemData['location_id'],
+                    (float) $itemData['quantity'],
                 );
 
                 $movements->push($movement);

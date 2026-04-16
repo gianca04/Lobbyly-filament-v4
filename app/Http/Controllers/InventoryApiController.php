@@ -103,4 +103,35 @@ class InventoryApiController extends Controller
 
         return response()->json($itemLocations);
     }
+
+    /**
+     * Lista TODAS las ubicaciones con el stock actual de un artículo.
+     *
+     * A diferencia de itemLocations, este incluye ubicaciones con stock 0.
+     * Útil para destinos de transferencia o ingresos.
+     *
+     * @param  Request  $request  Debe incluir item_id.
+     */
+    public function allLocationsWithStock(Request $request): JsonResponse
+    {
+        $request->validate([
+            'item_id' => ['required', 'integer', 'exists:items,id'],
+        ]);
+
+        $itemId = $request->input('item_id');
+        
+        $locations = Location::select(['id', 'name'])->orderBy('name')->get();
+        
+        $itemLocations = ItemLocation::where('item_id', $itemId)
+            ->get(['location_id', 'quantity'])
+            ->keyBy('location_id');
+
+        $result = $locations->map(fn (Location $loc) => [
+            'location_id' => $loc->id,
+            'location_name' => $loc->name,
+            'quantity' => (float) ($itemLocations->get($loc->id)?->quantity ?? 0),
+        ]);
+
+        return response()->json($result);
+    }
 }

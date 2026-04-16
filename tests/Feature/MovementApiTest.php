@@ -44,7 +44,7 @@ class MovementApiTest extends TestCase
 
     public function test_input_movement_creates_movements_and_updates_stock(): void
     {
-        $response = $this->actingAs($this->user)->postJson('/api/movements/input', [
+        $response = $this->actingAs($this->user)->postJson('/internal/movements/input', [
             'item_id' => $this->item->id,
             'distributions' => [
                 ['location_id' => $this->locationA->id, 'quantity' => 24],
@@ -92,7 +92,7 @@ class MovementApiTest extends TestCase
 
     public function test_input_movement_fails_with_invalid_data(): void
     {
-        $response = $this->actingAs($this->user)->postJson('/api/movements/input', [
+        $response = $this->actingAs($this->user)->postJson('/internal/movements/input', [
             'item_id' => 9999,
             'distributions' => [],
         ]);
@@ -103,7 +103,7 @@ class MovementApiTest extends TestCase
 
     public function test_input_movement_fails_with_zero_quantity(): void
     {
-        $response = $this->actingAs($this->user)->postJson('/api/movements/input', [
+        $response = $this->actingAs($this->user)->postJson('/internal/movements/input', [
             'item_id' => $this->item->id,
             'distributions' => [
                 ['location_id' => $this->locationA->id, 'quantity' => 0],
@@ -126,7 +126,7 @@ class MovementApiTest extends TestCase
         ]);
         $this->item->update(['current_stock' => 100]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/movements/output', [
+        $response = $this->actingAs($this->user)->postJson('/internal/movements/output', [
             'item_id' => $this->item->id,
             'location_id' => $this->locationA->id,
             'quantity' => 30,
@@ -162,7 +162,7 @@ class MovementApiTest extends TestCase
         ]);
         $this->item->update(['current_stock' => 10]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/movements/output', [
+        $response = $this->actingAs($this->user)->postJson('/internal/movements/output', [
             'item_id' => $this->item->id,
             'location_id' => $this->locationA->id,
             'quantity' => 50,
@@ -178,7 +178,7 @@ class MovementApiTest extends TestCase
 
     public function test_output_movement_fails_with_no_stock_record(): void
     {
-        $response = $this->actingAs($this->user)->postJson('/api/movements/output', [
+        $response = $this->actingAs($this->user)->postJson('/internal/movements/output', [
             'item_id' => $this->item->id,
             'location_id' => $this->locationA->id,
             'quantity' => 5,
@@ -199,7 +199,7 @@ class MovementApiTest extends TestCase
         ]);
         $this->item->update(['current_stock' => 100]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/movements/transfer', [
+        $response = $this->actingAs($this->user)->postJson('/internal/movements/transfer', [
             'item_id' => $this->item->id,
             'origin_location_id' => $this->locationB->id,
             'destination_location_id' => $this->locationA->id,
@@ -233,7 +233,7 @@ class MovementApiTest extends TestCase
 
     public function test_transfer_fails_when_origin_equals_destination(): void
     {
-        $response = $this->actingAs($this->user)->postJson('/api/movements/transfer', [
+        $response = $this->actingAs($this->user)->postJson('/internal/movements/transfer', [
             'item_id' => $this->item->id,
             'origin_location_id' => $this->locationA->id,
             'destination_location_id' => $this->locationA->id,
@@ -253,7 +253,7 @@ class MovementApiTest extends TestCase
         ]);
         $this->item->update(['current_stock' => 5]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/movements/transfer', [
+        $response = $this->actingAs($this->user)->postJson('/internal/movements/transfer', [
             'item_id' => $this->item->id,
             'origin_location_id' => $this->locationB->id,
             'destination_location_id' => $this->locationA->id,
@@ -278,7 +278,7 @@ class MovementApiTest extends TestCase
         ]);
         $this->item->update(['current_stock' => 50]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/movements/adjustment', [
+        $response = $this->actingAs($this->user)->postJson('/internal/movements/adjustment', [
             'item_id' => $this->item->id,
             'location_id' => $this->locationB->id,
             'new_quantity' => 42,
@@ -316,7 +316,7 @@ class MovementApiTest extends TestCase
         ]);
         $this->item->update(['current_stock' => 30]);
 
-        $response = $this->actingAs($this->user)->postJson('/api/movements/adjustment', [
+        $response = $this->actingAs($this->user)->postJson('/internal/movements/adjustment', [
             'item_id' => $this->item->id,
             'location_id' => $this->locationA->id,
             'new_quantity' => 35,
@@ -339,7 +339,7 @@ class MovementApiTest extends TestCase
     public function test_adjustment_creates_pivot_if_not_exists(): void
     {
         /** No hay registro previo en item_location */
-        $response = $this->actingAs($this->user)->postJson('/api/movements/adjustment', [
+        $response = $this->actingAs($this->user)->postJson('/internal/movements/adjustment', [
             'item_id' => $this->item->id,
             'location_id' => $this->locationA->id,
             'new_quantity' => 15,
@@ -363,14 +363,14 @@ class MovementApiTest extends TestCase
     public function test_index_returns_paginated_movements(): void
     {
         /** Primero generar un ingreso para tener movimientos */
-        $this->actingAs($this->user)->postJson('/api/movements/input', [
+        $this->actingAs($this->user)->postJson('/internal/movements/input', [
             'item_id' => $this->item->id,
             'distributions' => [
                 ['location_id' => $this->locationA->id, 'quantity' => 10],
             ],
         ]);
 
-        $response = $this->actingAs($this->user)->getJson('/api/movements');
+        $response = $this->actingAs($this->user)->getJson('/internal/movements');
 
         $response->assertStatus(200);
         $response->assertJsonStructure([
@@ -382,14 +382,14 @@ class MovementApiTest extends TestCase
 
     public function test_index_filters_by_type(): void
     {
-        $this->actingAs($this->user)->postJson('/api/movements/input', [
+        $this->actingAs($this->user)->postJson('/internal/movements/input', [
             'item_id' => $this->item->id,
             'distributions' => [
                 ['location_id' => $this->locationA->id, 'quantity' => 10],
             ],
         ]);
 
-        $response = $this->actingAs($this->user)->getJson('/api/movements?type=input');
+        $response = $this->actingAs($this->user)->getJson('/internal/movements?type=input');
         $response->assertStatus(200);
 
         $data = $response->json('data');
@@ -400,14 +400,14 @@ class MovementApiTest extends TestCase
 
     public function test_show_returns_single_movement_with_relations(): void
     {
-        $this->actingAs($this->user)->postJson('/api/movements/input', [
+        $this->actingAs($this->user)->postJson('/internal/movements/input', [
             'item_id' => $this->item->id,
             'distributions' => [
                 ['location_id' => $this->locationA->id, 'quantity' => 5],
             ],
         ]);
 
-        $response = $this->actingAs($this->user)->getJson('/api/movements/1');
+        $response = $this->actingAs($this->user)->getJson('/internal/movements/1');
 
         $response->assertStatus(200);
         $response->assertJsonStructure([

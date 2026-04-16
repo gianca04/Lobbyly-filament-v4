@@ -5,41 +5,34 @@ declare(strict_types=1);
 namespace App\DTOs;
 
 /**
- * DTO para transportar datos de un ingreso masivo de inventario.
+ * DTO for transporting data for massive inventory input.
  *
- * Permite distribuir una compra en múltiples ubicaciones simultáneamente.
- * Por ejemplo: se compraron 3 cajas de 24 unidades = 72 unidades totales,
- * 24 van al estante A4 y 48 al almacén B5.
+ * Allows registering multiple items and their respective locations in a single transaction.
  *
- * @property-read int $itemId Identificador del artículo ingresado.
- * @property-read int $userId Identificador del usuario responsable.
- * @property-read string|null $notes Observaciones generales del ingreso.
- * @property-read array<int, array{location_id: int, quantity: float}> $distributions Distribución por ubicación.
+ * @property-read int $userId Identifier of the responsible user.
+ * @property-read array<int, array{item_id: int, location_id: int, quantity: float}> $items List of items to be entered.
+ * @property-read string|null $notes General notes for the input transaction.
  */
 readonly class InputMovementData
 {
     /**
-     * Crea una nueva instancia del DTO de ingreso masivo.
+     * Create a new instance of the massive input DTO.
      *
-     * @param  int  $itemId  Identificador del artículo ingresado.
-     * @param  int  $userId  Identificador del usuario responsable.
-     * @param  array<int, array{location_id: int, quantity: float}>  $distributions  Distribución del ingreso por ubicación.
-     * @param  string|null  $notes  Observaciones generales del ingreso.
+     * @param  int  $userId  Identifier of the responsible user.
+     * @param  array<int, array{item_id: int, location_id: int, quantity: float}>  $items  List of items with their locations and quantities.
+     * @param  string|null  $notes  General notes for the transaction.
      */
     public function __construct(
-        public int $itemId,
         public int $userId,
-        public array $distributions,
+        public array $items,
         public ?string $notes = null,
     ) {}
 
     /**
-     * Calcula la cantidad total sumando todas las distribuciones.
-     *
-     * Útil para validar contra la cantidad esperada de la compra.
+     * Calculates the total quantity across all items and distributions.
      */
     public function totalQuantity(): float
     {
-        return array_sum(array_column($this->distributions, 'quantity'));
+        return array_sum(array_column($this->items, 'quantity'));
     }
 }

@@ -83,9 +83,8 @@ class MovementController extends Controller
         ProcessInputMovementAction $action,
     ): JsonResponse {
         $data = new InputMovementData(
-            itemId: (int) $request->validated('item_id'),
             userId: (int) Auth::id(),
-            distributions: $request->validated('distributions'),
+            items: $request->validated('distributions'),
             notes: $request->validated('notes'),
         );
 

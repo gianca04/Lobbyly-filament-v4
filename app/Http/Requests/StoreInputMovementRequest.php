@@ -30,10 +30,10 @@ class StoreInputMovementRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'item_id' => ['required', 'integer', 'exists:items,id'],
             'distributions' => ['required', 'array', 'min:1'],
+            'distributions.*.item_id' => ['required', 'integer', 'exists:items,id'],
             'distributions.*.location_id' => ['required', 'integer', 'exists:locations,id'],
-            'distributions.*.quantity' => ['required', 'numeric', 'min:0.01'],
+            'distributions.*.quantity' => ['required', 'numeric', 'min:1'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
     }
@@ -46,14 +46,14 @@ class StoreInputMovementRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'item_id.required' => 'El artículo es obligatorio.',
-            'item_id.exists' => 'El artículo seleccionado no existe.',
-            'distributions.required' => 'Debe indicar al menos una distribución.',
-            'distributions.min' => 'Debe haber al menos una distribución.',
-            'distributions.*.location_id.required' => 'La ubicación es obligatoria para cada distribución.',
+            'distributions.required' => 'Debe indicar al menos una línea de ingreso.',
+            'distributions.min' => 'Debe haber al menos una línea de ingreso.',
+            'distributions.*.item_id.required' => 'El artículo es obligatorio.',
+            'distributions.*.item_id.exists' => 'El artículo seleccionado no existe.',
+            'distributions.*.location_id.required' => 'La ubicación es obligatoria.',
             'distributions.*.location_id.exists' => 'La ubicación seleccionada no existe.',
-            'distributions.*.quantity.required' => 'La cantidad es obligatoria para cada distribución.',
-            'distributions.*.quantity.min' => 'La cantidad debe ser mayor a cero.',
+            'distributions.*.quantity.required' => 'La cantidad es obligatoria.',
+            'distributions.*.quantity.min' => 'La cantidad mínima debe ser 1.',
             'notes.max' => 'Las observaciones no deben exceder los 1000 caracteres.',
         ];
     }

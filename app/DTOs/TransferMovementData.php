@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\DTOs;
 
+use Illuminate\Support\Facades\Auth;
+
 /**
  * DTO para transportar datos de una transferencia entre ubicaciones.
  *
@@ -19,11 +21,13 @@ namespace App\DTOs;
  */
 readonly class TransferMovementData
 {
+    public int $userId;
+
     /**
      * Crea una nueva instancia del DTO de transferencia.
      *
      * @param  int  $itemId  Identificador del artículo a transferir.
-     * @param  int  $userId  Identificador del usuario responsable.
+     * @param  int|null  $userId  Identificador del usuario responsable. Si es nulo, se usa el usuario autenticado.
      * @param  int  $originLocationId  Ubicación de donde se extrae el stock.
      * @param  int  $destinationLocationId  Ubicación donde se deposita el stock.
      * @param  float  $quantity  Cantidad a transferir.
@@ -31,10 +35,12 @@ readonly class TransferMovementData
      */
     public function __construct(
         public int $itemId,
-        public int $userId,
+        ?int $userId,
         public int $originLocationId,
         public int $destinationLocationId,
         public float $quantity,
         public ?string $notes = null,
-    ) {}
+    ) {
+        $this->userId = $userId ?? (int) Auth::id();
+    }
 }

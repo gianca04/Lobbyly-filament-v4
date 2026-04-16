@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\MovementController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,15 +17,5 @@ Route::get('/user', function (Request $request) {
 | la separación de responsabilidades.
 |
 */
-Route::prefix('movements')->name('movements.')->group(function (): void {
-    Route::get('/', [MovementController::class, 'index'])->name('index');
-    Route::get('/{movement}', [MovementController::class, 'show'])->name('show');
-
-    Route::post('/input', [MovementController::class, 'storeInput'])->name('store.input');
-    Route::post('/output', [MovementController::class, 'storeOutput'])->name('store.output');
-    Route::post('/transfer', [MovementController::class, 'storeTransfer'])->name('store.transfer');
-    Route::post('/adjustment', [MovementController::class, 'storeAdjustment'])->name('store.adjustment');
-
-    Route::post('/batch-transfer', [MovementController::class, 'storeBatchTransfer'])->name('store.batch-transfer');
-    Route::post('/batch-adjustment', [MovementController::class, 'storeBatchAdjustment'])->name('store.batch-adjustment');
-});
+// Las rutas de movimientos se han movido a routes/web.php bajo el prefijo 'internal/movements'
+// para asegurar el acceso a la sesión y al usuario autenticado.
