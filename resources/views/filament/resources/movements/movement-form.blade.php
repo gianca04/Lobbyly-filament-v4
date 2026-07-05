@@ -20,7 +20,7 @@
 
         .mv-type-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
             margin-bottom: 1.5rem;
         }
@@ -462,20 +462,6 @@
         ]) }}" @endif>
         {{-- Selector de tipo --}}
         <div class="mv-type-grid">
-            <button type="button" class="mv-type-btn" data-type="input"
-                @if ($mode === 'view') disabled @endif>
-                <div class="mv-icon">
-                    <x-heroicon-o-arrow-down-tray class="w-6 h-6" />
-                </div>
-                <span>Ingreso</span>
-            </button>
-            <button type="button" class="mv-type-btn" data-type="output"
-                @if ($mode === 'view') disabled @endif>
-                <div class="mv-icon">
-                    <x-heroicon-o-arrow-up-tray class="w-6 h-6" />
-                </div>
-                <span>Salida</span>
-            </button>
             <button type="button" class="mv-type-btn" data-type="transfer"
                 @if ($mode === 'view') disabled @endif>
                 <div class="mv-icon">

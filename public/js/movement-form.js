@@ -79,7 +79,7 @@
             switchType(movement.type);
             // View mode would need hydration logic here if needed beyond simple display
         } else {
-            switchType('input'); // Default
+            switchType('transfer'); // Default
         }
 
         // Global Submit Handle

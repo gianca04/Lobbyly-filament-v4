@@ -33,6 +33,8 @@ class DatabaseSeeder extends Seeder
             SupplierSeeder::class,
             ItemSeeder::class,
             MovementSeeder::class,
+            FloorSeeder::class,
+            FeatureSeeder::class,
         ]);
     }
 }

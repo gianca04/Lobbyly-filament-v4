@@ -44,7 +44,10 @@ class MovementForm
                             ->preload(),
                         Select::make('type')
                             ->label('Tipo de Movimiento')
-                            ->options(MovementType::class)
+                            ->options([
+                                MovementType::TRANSFER->value => MovementType::TRANSFER->label(),
+                                MovementType::ADJUSTMENT->value => MovementType::ADJUSTMENT->label(),
+                            ])
                             ->required()
                             ->native(false),
                         TextInput::make('quantity')

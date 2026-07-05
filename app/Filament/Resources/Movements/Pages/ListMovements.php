@@ -52,10 +52,8 @@ class ListMovements extends ListRecords
     {
         return [
             CreateAction::make(),
-            $this->makeInputAction(),
-            $this->makeOutputAction(),
-            $this->makeTransferAction(),
-            $this->makeAdjustmentAction(),
+            // $this->makeTransferAction(),
+            // $this->makeAdjustmentAction(),
         ];
     }
 
@@ -65,6 +63,8 @@ class ListMovements extends ListRecords
      * Permite distribuir un ingreso en múltiples ubicaciones usando Repeater.
      * Cada fila tiene una ubicación y una cantidad.
      */
+
+    /*
     private function makeInputAction(): Action
     {
         return Action::make('registerInput')
@@ -144,6 +144,9 @@ class ListMovements extends ListRecords
      * Extrae artículos de una ubicación específica.
      * Valida stock suficiente antes de procesar.
      */
+    /*
+
+    */
     private function makeOutputAction(): Action
     {
         return Action::make('registerOutput')
@@ -176,7 +179,7 @@ class ListMovements extends ListRecords
                             ->where('quantity', '>', 0)
                             ->with('location')
                             ->get()
-                            ->mapWithKeys(fn($pivot) => [
+                            ->mapWithKeys(fn ($pivot) => [
                                 $pivot->location_id => "{$pivot->location->name} (Stock: {$pivot->quantity})",
                             ])
                             ->toArray();
@@ -232,6 +235,7 @@ class ListMovements extends ListRecords
      * Mueve artículos de una ubicación a otra.
      * Genera 2 movimientos independientes (salida + ingreso).
      */
+    /*
     private function makeTransferAction(): Action
     {
         return Action::make('registerTransfer')
@@ -255,7 +259,7 @@ class ListMovements extends ListRecords
                     ->label('Ubicación de Origen')
                     ->options(function (Get $get): array {
                         $itemId = $get('item_id');
-                        if (! $itemId) {
+                        if (!$itemId) {
                             return Location::pluck('name', 'id')->toArray();
                         }
 
@@ -320,13 +324,14 @@ class ListMovements extends ListRecords
                 }
             });
     }
-
+*/
     /**
      * Acción: Registrar Ajuste.
      *
      * Corrige el stock cuando el conteo real difiere del registrado.
      * Muestra el stock actual como referencia visual.
      */
+    /*
     private function makeAdjustmentAction(): Action
     {
         return Action::make('registerAdjustment')
@@ -350,7 +355,7 @@ class ListMovements extends ListRecords
                     ->label('Ubicación')
                     ->options(function (Get $get): array {
                         $itemId = $get('item_id');
-                        if (! $itemId) {
+                        if (!$itemId) {
                             return Location::pluck('name', 'id')->toArray();
                         }
 
@@ -375,7 +380,7 @@ class ListMovements extends ListRecords
                         $itemId = $get('item_id');
                         $locationId = $get('location_id');
 
-                        if (! $itemId || ! $locationId) {
+                        if (!$itemId || !$locationId) {
                             return 'Seleccione artículo y ubicación';
                         }
 
@@ -427,4 +432,5 @@ class ListMovements extends ListRecords
                 }
             });
     }
+    */
 }

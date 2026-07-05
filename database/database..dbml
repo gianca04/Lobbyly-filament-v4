@@ -1,0 +1,230 @@
+Project lobbyly {
+  database_type: 'mysql'
+  dbml_version: '1.0.0'
+}
+
+// Enums
+enum document_type_enum {
+  dni [note: 'DNI']
+  ce [note: 'Carnet de Extranjería']
+  pasaporte [note: 'Pasaporte']
+  ruc [note: 'RUC (Persona Jurídica)']
+}
+
+enum movement_type_enum {
+  input [note: 'Ingreso']
+  output [note: 'Salida']
+  transfer [note: 'Intercambio']
+  adjustment [note: 'Ajuste']
+  consumption [note: 'Consumo']
+}
+
+enum room_status_enum {
+  out_of_service [note: 'Inhabilitada']
+  available [note: 'Disponible']
+  cleaning [note: 'Limpieza']
+  reserved [note: 'Reservada']
+}
+
+enum metodo_pago_enum {
+  efectivo [note: 'Efectivo']
+  yape [note: 'Yape']
+  plin [note: 'Plin']
+  tarjeta [note: 'Tarjeta']
+  transferencia [note: 'Transferencia']
+}
+
+enum tipo_alquiler_enum {
+  horas [note: 'Horas']
+  dias [note: 'Días']
+  indefinido [note: 'Indefinido']
+}
+
+enum tipo_documento_enum {
+  dni [note: 'DNI']
+  ruc [note: 'RUC']
+  carnet_extranjeria [note: 'Carné de Extranjería']
+  pasaporte [note: 'Pasaporte']
+}
+
+// Tables
+
+Table users {
+  id bigint [primary key]
+  name varchar
+  email varchar [unique] // Nulleable
+  email_verified_at timestamp 
+  password varchar
+  remember_token varchar
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table employees {
+  id bigint [primary key]
+  user_id bigint
+  document_type document_type_enum
+  document_number varchar
+  first_name varchar
+  last_name varchar
+  birth_date date
+  phones json // [nullable]
+  addresses json // [nullable]
+  photo_path varchar // [nullable]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table locations {
+  id bigint [primary key]
+  name varchar [unique]
+  is_default boolean [default: false]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table categories {
+  id bigint [primary key]
+  name varchar [unique]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table unit_of_measures {
+  id bigint [primary key]
+  name varchar [unique]
+  symbol varchar [unique]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table suppliers {
+  id bigint [primary key]
+  name varchar [unique]
+  email json // [nullable]
+  phone json // [nullable]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table items {
+  id bigint [primary key]
+  name varchar
+  sku varchar [unique]
+  supplier_id bigint
+  unit_of_measure_id bigint
+  unit_cost decimal [default: 0]
+  current_stock decimal [default: 0]
+  minimum_stock decimal [default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table item_location {
+  id bigint [primary key]
+  item_id bigint
+  location_id bigint
+  quantity decimal [default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table category_item {
+  id bigint [primary key]
+  item_id bigint
+  category_id bigint
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table movements {
+  id bigint [primary key]
+  item_id bigint
+  location_id bigint
+  user_id bigint
+  type movement_type_enum
+  quantity decimal
+  notes text // [nullable]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table floors {
+  id bigint [primary key]
+  name varchar [unique]
+  description text // [nullable]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table features {
+  id bigint [primary key]
+  name varchar [unique]
+  price decimal [default: 0]
+  is_active boolean [default: true]
+  is_removable boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table room_types {
+  id bigint [primary key]
+  name varchar [unique]
+  base_price decimal [default: 0]
+  is_active boolean [default: true]
+  capacity int [default: 1]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table caracteristica_tipo_habitacion {
+  id bigint [primary key]
+  habitacion_tipo_id bigint
+  caracteristica_id bigint
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table rooms {
+  id bigint [primary key]
+  number varchar [unique]
+  status room_status_enum [default: 'available']
+  description text // [nullable]
+  floor_id bigint
+  room_type_id bigint
+  notes text // [nullable]
+  location varchar // [nullable]
+  last_cleaned_at timestamp // [nullable]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table room_status_logs {
+  id bigint [primary key]
+  room_id bigint
+  user_id bigint // [nullable]
+  status room_status_enum
+  note text // [nullable]
+  created_at timestamp
+  updated_at timestamp
+}
+
+// Relationships
+Ref: employees.user_id > users.id [delete: cascade]
+Ref: items.supplier_id > suppliers.id [delete: cascade]
+Ref: items.unit_of_measure_id > unit_of_measures.id [delete: cascade]
+Ref: item_location.item_id > items.id [delete: cascade]
+Ref: item_location.location_id > locations.id [delete: cascade]
+Ref: category_item.item_id > items.id [delete: cascade]
+Ref: category_item.category_id > categories.id [delete: cascade]
+Ref: movements.item_id > items.id [delete: cascade]
+Ref: movements.location_id > locations.id [delete: cascade]
+Ref: movements.user_id > users.id [delete: cascade]
+Ref: caracteristica_tipo_habitacion.habitacion_tipo_id > room_types.id [delete: cascade]
+Ref: caracteristica_tipo_habitacion.caracteristica_id > features.id [delete: cascade]
+Ref: rooms.floor_id > floors.id [delete: restrict]
+Ref: rooms.room_type_id > room_types.id [delete: restrict]
+Ref: room_status_logs.room_id > rooms.id [delete: cascade]
+Ref: room_status_logs.user_id > users.id [delete: set null]
