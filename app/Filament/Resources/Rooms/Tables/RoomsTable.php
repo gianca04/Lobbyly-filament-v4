@@ -35,17 +35,17 @@ class RoomsTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('roomType.base_price')
-                    ->label('Precio Base')
+                    ->label('Base')
                     ->money('PEN')
                     ->sortable(),
                 TextColumn::make('roomType.features_price')
                     ->label('Adicionales')
                     ->money('PEN')
-                    ->getStateUsing(fn (Room $record) => $record->roomType?->getPrecioCaracteristicas() ?? 0.00),
+                    ->getStateUsing(fn(Room $record) => $record->roomType?->getPrecioCaracteristicas() ?? 0.00),
                 TextColumn::make('roomType.final_price')
                     ->label('Total')
                     ->money('PEN')
-                    ->getStateUsing(fn (Room $record) => $record->roomType?->getPrecioFinal() ?? 0.00),
+                    ->getStateUsing(fn(Room $record) => $record->roomType?->getPrecioFinal() ?? 0.00),
                 TextColumn::make('location')
                     ->label('Ubicación')
                     ->searchable()
